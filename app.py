@@ -10,8 +10,9 @@ import io
 st.set_page_config(
     page_title="Agendamento de Passagens",
     page_icon="🚌",
-    layout="centered"
-)
+    layout="centered",
+    initial_sidebar_state="collapsed"
+    )
 
 # CSS para aumentar o tamanho da fonte
 st.markdown("""
