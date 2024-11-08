@@ -245,7 +245,6 @@ elif aba_selecionada == "Administração de Agendamentos":
 
         if st.button("Excluir Agendamento"):
             delete_paciente(paciente_nome)
-            st.success(f"Agendamento de {
-                       paciente_nome} foi excluído com sucesso.")
+            st.success(f"Agendamento de {paciente_nome} foi excluído com sucesso.") 
     else:
         st.write("Nenhum agendamento encontrado.")
