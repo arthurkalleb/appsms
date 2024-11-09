@@ -189,7 +189,7 @@ if aba_selecionada == "Agendar Passagem":
             st.success('Agendamento realizado com sucesso!')
 
 elif aba_selecionada == "Administração de Agendamentos":
-    st.title('📋 Administração de Agendamentos')
+    st.title('Agendamentos')
 
     # Obter todos os pacientes
     conn = get_db_connection()
@@ -197,7 +197,7 @@ elif aba_selecionada == "Administração de Agendamentos":
     conn.close()
 
     if not pacientes.empty:
-        st.subheader("Lista de Agendamentos")
+        st.subheader("Lista de Pacientes")
         pacientes['Selecionado'] = False
 
         # Checkbox de seleção de passagem concedida
