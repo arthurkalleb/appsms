@@ -12,7 +12,7 @@ st.set_page_config(
     page_icon="🚌",
     layout="centered",
     initial_sidebar_state="collapsed"
-    )
+)
 
 # CSS para aumentar o tamanho da fonte
 st.markdown("""
@@ -29,16 +29,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Função para obter conexão com o banco de dados SQLite
-
-
 def get_db_connection(db_path='database.db'):
     db_path = os.path.join(os.path.dirname(__file__), db_path)
     conn = sqlite3.connect(db_path)
     return conn
 
 # Função para salvar os dados do paciente no banco de dados
-
-
 def save_paciente_to_db(paciente_info):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -71,8 +67,6 @@ def save_paciente_to_db(paciente_info):
     conn.close()
 
 # Função para garantir que a tabela será criada caso ainda não exista
-
-
 def ensure_table_exists():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -94,13 +88,10 @@ def ensure_table_exists():
     cursor.close()
     conn.close()
 
-
 # Certificar que a tabela existe ao inicializar o app
 ensure_table_exists()
 
 # Função para obter paradas por bairro
-
-
 def get_paradas(bairro):
     paradas = {
         'Alto da Esperança': ['PSF novo', 'PSF antigo', 'Em frente a branca'],
@@ -111,8 +102,6 @@ def get_paradas(bairro):
     return paradas.get(bairro, [])
 
 # Função para atualizar o status de passagem concedida
-
-
 def update_passagem_concedida(nome_paciente, concedida):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -126,8 +115,6 @@ def update_passagem_concedida(nome_paciente, concedida):
     conn.close()
 
 # Função para excluir um paciente pelo nome
-
-
 def delete_paciente(nome_paciente):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -140,11 +127,8 @@ def delete_paciente(nome_paciente):
     conn.close()
 
 # Função para exibir a imagem do documento
-
-
 def get_document_image(data):
     return Image.open(io.BytesIO(data))
-
 
 # Configuração de abas
 abas = ["Agendar Passagem", "Administração de Agendamentos"]
@@ -168,34 +152,25 @@ if aba_selecionada == "Agendar Passagem":
 
     # Formulário de agendamento
     st.header('Dados Pessoais')
-    nome_paciente = st.text_input(
-        'Nome do Paciente', value=st.session_state['paciente_info']['nome_paciente'])
-    procedimento = st.selectbox('Procedimento', ['Exame', 'Consulta'], index=[
-                                'Exame', 'Consulta'].index(st.session_state['paciente_info']['procedimento']))
-    contato = st.text_input(
-        'Contato', value=st.session_state['paciente_info']['contato'])
+    nome_paciente = st.text_input('Nome do Paciente', value=st.session_state['paciente_info']['nome_paciente'])
+    procedimento = st.selectbox('Procedimento', ['Exame', 'Consulta'], index=['Exame', 'Consulta'].index(st.session_state['paciente_info']['procedimento']))
+    contato = st.text_input('Contato', value=st.session_state['paciente_info']['contato'])
 
     st.header('Local da Consulta')
-    local_consulta = st.text_input(
-        'Local da Consulta', value=st.session_state['paciente_info']['local_consulta'])
-    hora_consulta = st.time_input(
-        'Hora da Consulta', value=st.session_state['paciente_info']['hora_consulta'])
+    local_consulta = st.text_input('Local da Consulta', value=st.session_state['paciente_info']['local_consulta'])
+    hora_consulta = st.time_input('Hora da Consulta', value=st.session_state['paciente_info']['hora_consulta'])
 
     st.header('Parada de Embarque')
-    bairro_embarque = st.selectbox('Bairro de Embarque', ['Alto da Esperança', 'Alto da esperança', 'Centro', 'Alto do Triângulo'], index=[
-                                   'Alto da Esperança', 'Alto da esperança', 'Centro', 'Alto do Triângulo'].index(st.session_state['paciente_info']['bairro_embarque']))
+    bairro_embarque = st.selectbox('Bairro de Embarque', ['Alto da Esperança', 'Alto da esperança', 'Centro', 'Alto do Triângulo'], index=['Alto da Esperança', 'Alto da esperança', 'Centro', 'Alto do Triângulo'].index(st.session_state['paciente_info']['bairro_embarque']))
     paradas = get_paradas(bairro_embarque)
-    parada_embarque = st.selectbox('Parada de Embarque', paradas, index=paradas.index(
-        st.session_state['paciente_info']['parada_embarque']) if st.session_state['paciente_info']['parada_embarque'] in paradas else 0)
+    parada_embarque = st.selectbox('Parada de Embarque', paradas, index=paradas.index(st.session_state['paciente_info']['parada_embarque']) if st.session_state['paciente_info']['parada_embarque'] in paradas else 0)
 
     st.header('Confirmação')
-    foto_documento = st.file_uploader(
-        "Upload da Foto do Documento", type=["jpg", "jpeg", "png"])
+    foto_documento = st.file_uploader("Upload da Foto do Documento", type=["jpg", "jpeg", "png"])
 
     if st.button('Confirmar Agendamento'):
         if not nome_paciente or not contato or not local_consulta or foto_documento is None:
-            st.error(
-                "Todos os campos devem ser preenchidos e o upload do documento é obrigatório.")
+            st.error("Todos os campos devem ser preenchidos e o upload do documento é obrigatório.")
         else:
             # Atualizar estado com informações do formulário
             st.session_state['paciente_info'].update({
@@ -223,29 +198,40 @@ elif aba_selecionada == "Administração de Agendamentos":
 
     if not pacientes.empty:
         st.subheader("Lista de Agendamentos")
-        st.dataframe(pacientes[['nome_paciente', 'procedimento', 'contato', 'local_consulta',
-                     'hora_consulta', 'bairro_embarque', 'parada_embarque', 'passagem_concedida']])
+        pacientes['Selecionado'] = False
+
+        # Checkbox de seleção de passagem concedida
+        for i, row in pacientes.iterrows():
+            aprovado = st.checkbox(f"{row['nome_paciente']} - Aprovar Passagem", key=f"aprovado_{i}")
+            pacientes.at[i, 'Selecionado'] = aprovado
+
+        # Tabela para visualização
+        aprovados_df = pacientes[pacientes['Selecionado']]
+        st.subheader("Pacientes Aprovados")
+        st.write(aprovados_df)
+
+        if not aprovados_df.empty:
+            csv = aprovados_df.to_csv(index=False)
+            st.download_button(
+                label="Baixar Lista de Pacientes Aprovados",
+                data=csv,
+                file_name="pacientes_aprovados.csv",
+                mime="text/csv"
+            )
 
         st.subheader("Gerenciar Agendamentos")
-        paciente_nome = st.selectbox(
-            "Selecione o Paciente", pacientes['nome_paciente'].unique())
+        paciente_nome = st.selectbox("Selecione o Paciente", pacientes['nome_paciente'].unique())
 
         # Exibir imagem do documento do paciente selecionado
         if st.button("Ver Documento"):
-            foto_documento = pacientes.loc[pacientes['nome_paciente']
-                                           == paciente_nome, 'foto_documento'].values[0]
+            foto_documento = pacientes.loc[pacientes['nome_paciente'] == paciente_nome, 'foto_documento'].values[0]
             if foto_documento:
-                st.image(get_document_image(foto_documento),
-                         caption="Foto do Documento")
+                st.image(get_document_image(foto_documento), caption="Foto do Documento")
             else:
                 st.warning("Documento não disponível.")
 
-        if st.button("Marcar como Passagem Concedida"):
-            update_passagem_concedida(paciente_nome, 1)
-            st.success(f"Passagem concedida para {paciente_nome}")
-
         if st.button("Excluir Agendamento"):
             delete_paciente(paciente_nome)
-            st.success(f"Agendamento de {paciente_nome} foi excluído com sucesso.") 
+            st.success(f"Agendamento de {paciente_nome} foi excluído com sucesso.")
     else:
         st.write("Nenhum agendamento encontrado.")
